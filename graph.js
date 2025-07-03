@@ -24,20 +24,24 @@ class Graph {
 
   // this function accepts two vertices and updates their adjacent values to include the other vertex
   addEdge(v1, v2) {
-    // if (this.nodes.has(v1 && this.nodes.has(v2)) {
-    //   this.nodes
-    //   this.nodes.delete()
-    // }
+    if (this.nodes.has(v1) && this.nodes.has(v2)) {
+      v1.adjacent.add(v2);
+      v2.adjacent.add(v1);
+    }
   }
 
   // this function accepts two vertices and updates their adjacent values to remove the other vertex
   removeEdge(v1, v2) {
-    // if (this.nodes.has(v1 && this.nodes.has(v2)) {
-    // }
+    if (this.nodes.has(v1) && this.nodes.has(v2)) {
+      v1.adjacent.delete(v2);
+      v2.adjacent.delete(v1);
+    }
   }
 
   // this function accepts a vertex and removes it from the nodes property, it also updates any adjacency lists that include that vertex
-  removeVertex(vertex) {}
+  removeVertex(vertex) {
+    if (this)
+  }
 
   // this function returns an array of Node values using DFS
   depthFirstSearch(start) {}
