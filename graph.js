@@ -40,7 +40,12 @@ class Graph {
 
   // this function accepts a vertex and removes it from the nodes property, it also updates any adjacency lists that include that vertex
   removeVertex(vertex) {
-    if (this)
+    if (this.nodes.has(vertex)) {
+      for (const adjacent of vertex.adjacent) {
+        this.removeEdge(vertex, adjacent);
+      }
+      this.nodes.delete(vertex);
+    }
   }
 
   // this function returns an array of Node values using DFS
