@@ -10,19 +10,19 @@ class Graph {
     this.nodes = new Set();
   }
 
-  // this function accepts a Node instance and adds it to the nodes property on the graph
+  // Adds node to graph
   addVertex(vertex) {
     this.nodes.add(vertex);
   }
 
-  // this function accepts an array of Node instances and adds them to the nodes property on the graph
+  // Adds multiple nodes to graph
   addVertices(vertexArray) {
     for (const vertex of vertexArray) {
       this.addVertex(vertex);
     }
   }
 
-  // this function accepts two vertices and updates their adjacent values to include the other vertex
+  // Connects two nodes
   addEdge(v1, v2) {
     if (this.nodes.has(v1) && this.nodes.has(v2)) {
       v1.adjacent.add(v2);
@@ -30,7 +30,7 @@ class Graph {
     }
   }
 
-  // this function accepts two vertices and updates their adjacent values to remove the other vertex
+  // Disconnects two nodes
   removeEdge(v1, v2) {
     if (this.nodes.has(v1) && this.nodes.has(v2)) {
       v1.adjacent.delete(v2);
@@ -38,7 +38,7 @@ class Graph {
     }
   }
 
-  // this function accepts a vertex and removes it from the nodes property, it also updates any adjacency lists that include that vertex
+  // Removes a node and its connections
   removeVertex(vertex) {
     if (this.nodes.has(vertex)) {
       for (const adjacent of vertex.adjacent) {
@@ -48,47 +48,37 @@ class Graph {
     }
   }
 
-  // this function returns an array of Node values using DFS
-  depthFirstSearch(start) {
+  // Returns an array of Node values
+  // Uses the supplied callback to determine next node to retrieve
+  _traverse(start, getNext) {
     if (!this.nodes.has(start)) return undefined;
 
-    const toVisitStack = [start];
+    const toVisit = [start];
     const seen = new Set([start]);
     const visitedValues = [];
 
-    while (toVisitStack.length) {
-      const current = toVisitStack.pop();
+    while (toVisit.length) {
+      const current = getNext(toVisit);
       visitedValues.push(current.value);
+
       for (const adjacent of current.adjacent) {
         if (!seen.has(adjacent)) {
           seen.add(adjacent);
-          toVisitStack.push(adjacent);
+          toVisit.push(adjacent);
         }
       }
     }
     return visitedValues;
   }
 
-  // this function returns an array of Node values using BFS
+  // Returns an array of Node values using DFS
+  depthFirstSearch(start) {
+    return this._traverse(start, (stack) => stack.pop());
+  }
+
+  // Returns an array of Node values using BFS
   breadthFirstSearch(start) {
-    if (!this.nodes.has(start)) return undefined;
-
-    const toVisitQueue = [start];
-    const seen = new Set([start]);
-    const visitedValues = [];
-
-    while (toVisitQueue.length) {
-      const current = toVisitQueue.shift();
-      visitedValues.push(current.value);
-      for (const adjacent of current.adjacent) {
-        if (!seen.has(adjacent)) {
-          seen.add(adjacent);
-          toVisitQueue.push(adjacent);
-        }
-      }
-    }
-
-    return visitedValues;
+    return this._traverse(start, (queue) => queue.shift());
   }
 }
 
