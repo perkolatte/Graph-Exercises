@@ -1,7 +1,7 @@
 const { Graph, Node } = require("./graph");
 
-describe("addVertex", function() {
-  it("should add a key in the adjacency", function() {
+describe("addVertex", function () {
+  it("should add a key in the adjacency", function () {
     let graph = new Graph();
     let a = new Node("A");
     let b = new Node("B");
@@ -18,8 +18,8 @@ describe("addVertex", function() {
   });
 });
 
-describe("addVertices", function() {
-  it("should add multiple keys in the adjacency", function() {
+describe("addVertices", function () {
+  it("should add multiple keys in the adjacency", function () {
     let graph = new Graph();
     let a = new Node("A");
     let b = new Node("B");
@@ -34,8 +34,8 @@ describe("addVertices", function() {
   });
 });
 
-describe("addEdge", function() {
-  it("should add the appropriate edges to the adjacency list", function() {
+describe("addEdge", function () {
+  it("should add the appropriate edges to the adjacency list", function () {
     let graph = new Graph();
     let a = new Node("A");
     let b = new Node("B");
@@ -53,8 +53,8 @@ describe("addEdge", function() {
   });
 });
 
-describe("removeEdge", function() {
-  it("should remove the vertices from the adjacency list", function() {
+describe("removeEdge", function () {
+  it("should remove the vertices from the adjacency list", function () {
     let graph = new Graph();
     let a = new Node("A");
     let b = new Node("B");
@@ -74,8 +74,8 @@ describe("removeEdge", function() {
   });
 });
 
-describe("removeVertex", function() {
-  it("should remove the vertex as well as any edges", function() {
+describe("removeVertex", function () {
+  it("should remove the vertex as well as any edges", function () {
     let graph = new Graph();
     let a = new Node("A");
     let b = new Node("B");
@@ -97,8 +97,8 @@ describe("removeVertex", function() {
   });
 });
 
-describe("DFS", function() {
-  it("return an array of the nodes searched using DFS", function() {
+describe("DFS", function () {
+  it("return an array of the nodes searched using DFS", function () {
     let graph = new Graph();
     let S = new Node("S");
     let P = new Node("P");
@@ -146,8 +146,8 @@ describe("DFS", function() {
   });
 });
 
-describe("BFS", function() {
-  it("should return an array of the nodes searched using BFS", function() {
+describe("BFS", function () {
+  it("should return an array of the nodes searched using BFS", function () {
     let graph = new Graph();
     let S = new Node("S");
     let P = new Node("P");
@@ -194,7 +194,78 @@ describe("BFS", function() {
       "Y",
       "R",
       "W",
-      "T"
+      "T",
     ]);
+  });
+});
+
+describe("shortestPath", function () {
+  it("should return the shortest path between two nodes", function () {
+    let graph = new Graph();
+    let S = new Node("S");
+    let P = new Node("P");
+    let U = new Node("U");
+    let X = new Node("X");
+    let Q = new Node("Q");
+    let Y = new Node("Y");
+    let V = new Node("V");
+    let R = new Node("R");
+    let W = new Node("W");
+    let T = new Node("T");
+
+    graph.addVertices([S, P, U, X, Q, Y, V, R, W, T]);
+
+    graph.addEdge(S, P);
+    graph.addEdge(S, U);
+    graph.addEdge(P, X);
+    graph.addEdge(U, X);
+    graph.addEdge(P, Q);
+    graph.addEdge(U, V);
+    graph.addEdge(X, Q);
+    graph.addEdge(X, Y);
+    graph.addEdge(X, V);
+    graph.addEdge(Q, R);
+    graph.addEdge(Y, R);
+    graph.addEdge(Y, W);
+    graph.addEdge(V, W);
+    graph.addEdge(R, T);
+    graph.addEdge(W, T);
+
+    // There are two shortest paths of length 4: S-U-V-W-T and S-P-Q-R-T.
+    // BFS might find either one depending on the order of neighbors.
+    const path = graph.shortestPath(S, T);
+    expect(path.length).toBe(5);
+    const validPaths = [
+      ["S", "U", "V", "W", "T"],
+      ["S", "P", "Q", "R", "T"],
+    ];
+    expect(validPaths).toContainEqual(path);
+  });
+
+  it("should return null if no path exists", function () {
+    let graph = new Graph();
+    let a = new Node("A");
+    let b = new Node("B");
+    let c = new Node("C");
+    graph.addVertices([a, b, c]);
+    graph.addEdge(a, b);
+    expect(graph.shortestPath(a, c)).toBeNull();
+  });
+
+  it("should return a path with one node if start and end are the same", function () {
+    let graph = new Graph();
+    let a = new Node("A");
+    graph.addVertex(a);
+    expect(graph.shortestPath(a, a)).toEqual(["A"]);
+  });
+
+  it("should return null if start or end node is not in the graph", function () {
+    let graph = new Graph();
+    let a = new Node("A");
+    let b = new Node("B");
+    let c = new Node("C");
+    graph.addVertices([a, b]);
+    expect(graph.shortestPath(a, c)).toBeNull();
+    expect(graph.shortestPath(c, a)).toBeNull();
   });
 });

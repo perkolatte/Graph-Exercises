@@ -116,6 +116,39 @@ class Graph {
   breadthFirstSearch(start) {
     return this._traverse(start, true);
   }
+
+  /**
+   * Finds the shortest path between two nodes in an unweighted graph.
+   * @param {Node} source The starting node.
+   * @param {Node} target The target node.
+   * @returns {string[]|null} An array of node values representing the shortest path, or null if no path exists.
+   */
+  shortestPath(source, target) {
+    if (!this.nodes.has(source) || !this.nodes.has(target)) return null;
+    if (source === target) return [source.value];
+
+    const queue = new Queue();
+    queue.enqueue([source]);
+    const visited = new Set([source]);
+
+    while (!queue.isEmpty()) {
+      const currentPath = queue.dequeue();
+      let currentNode = currentPath[currentPath.length - 1];
+
+      if (currentNode === target) {
+        return currentPath.map((node) => node.value);
+      }
+
+      for (const adjacent of currentNode.adjacent) {
+        if (!visited.has(adjacent)) {
+          visited.add(adjacent);
+          const newPath = [...currentPath, adjacent];
+          queue.enqueue(newPath);
+        }
+      }
+    }
+    return null;
+  }
 }
 
 module.exports = { Graph, Node };
