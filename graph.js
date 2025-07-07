@@ -50,23 +50,19 @@ class Graph {
 
   // this function returns an array of Node values using DFS
   depthFirstSearch(start) {
-    let visitedValues;
-    if (this.nodes.has(start)) {
-      visitedValues = [];
-      let current = null;
-      const toVisit = [start];
-      const seen = new Set();
-      seen.add(start);
+    if (!this.nodes.has(start)) return undefined;
 
-      while (toVisit.length) {
-        current = toVisit.pop();
-        seen.add(current);
-        visitedValues.push(current.value);
-        for (const adjacent of current.adjacent) {
-          if (!seen.has(adjacent)) {
-            toVisit.push(adjacent);
-            seen.add(adjacent);
-          }
+    const toVisitStack = [start];
+    const seen = new Set([start]);
+    const visitedValues = [];
+
+    while (toVisitStack.length) {
+      const current = toVisitStack.pop();
+      visitedValues.push(current.value);
+      for (const adjacent of current.adjacent) {
+        if (!seen.has(adjacent)) {
+          seen.add(adjacent);
+          toVisitStack.push(adjacent);
         }
       }
     }
@@ -75,26 +71,23 @@ class Graph {
 
   // this function returns an array of Node values using BFS
   breadthFirstSearch(start) {
-    let visitedValues;
-    if (this.nodes.has(start)) {
-      visitedValues = [];
-      let current = null;
-      const toVisit = [start];
-      const seen = new Set();
-      seen.add(start);
+    if (!this.nodes.has(start)) return undefined;
 
-      while (toVisit.length) {
-        current = toVisit.shift();
-        seen.add(current);
-        visitedValues.push(current.value);
-        for (const adjacent of current.adjacent) {
-          if (!seen.has(adjacent)) {
-            toVisit.push(adjacent);
-            seen.add(adjacent);
-          }
+    const toVisitQueue = [start];
+    const seen = new Set([start]);
+    const visitedValues = [];
+
+    while (toVisitQueue.length) {
+      const current = toVisitQueue.shift();
+      visitedValues.push(current.value);
+      for (const adjacent of current.adjacent) {
+        if (!seen.has(adjacent)) {
+          seen.add(adjacent);
+          toVisitQueue.push(adjacent);
         }
       }
     }
+
     return visitedValues;
   }
 }
