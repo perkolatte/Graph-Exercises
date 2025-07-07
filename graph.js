@@ -1,3 +1,5 @@
+const Queue = require("./queue");
+
 class Node {
   constructor(value, adjacent = new Set()) {
     this.value = value;
@@ -10,19 +12,29 @@ class Graph {
     this.nodes = new Set();
   }
 
-  // Adds node to graph
+  /**
+   * Adds a node to the graph.
+   * @param {Node} vertex The node to add.
+   */
   addVertex(vertex) {
     this.nodes.add(vertex);
   }
 
-  // Adds multiple nodes to graph
+  /**
+   * Adds multiple nodes to the graph.
+   * @param {Node[]} vertexArray An array of nodes to add.
+   */
   addVertices(vertexArray) {
     for (const vertex of vertexArray) {
       this.addVertex(vertex);
     }
   }
 
-  // Connects two nodes
+  /**
+   * Creates an edge between two nodes in the graph.
+   * @param {Node} v1 The first node.
+   * @param {Node} v2 The second node.
+   */
   addEdge(v1, v2) {
     if (!this.nodes.has(v1) || !this.nodes.has(v2))
       throw new Error("Both vertices must be in the graph to form an edge.");
@@ -30,24 +42,35 @@ class Graph {
     v2.adjacent.add(v1);
   }
 
-  // Disconnects two nodes
+  /**
+   * Removes an edge between two nodes.
+   * @param {Node} v1 The first node.
+   * @param {Node} v2 The second node.
+   */
   removeEdge(v1, v2) {
     v1.adjacent.delete(v2);
     v2.adjacent.delete(v1);
   }
 
-  // Removes a node and its connections
+  /**
+   * Removes a node and all its connections from the graph.
+   * @param {Node} vertex The node to remove.
+   */
   removeVertex(vertex) {
-    if (this.nodes.has(vertex)) {
-      for (const adjacent of vertex.adjacent) {
-        this.removeEdge(vertex, adjacent);
-      }
-      this.nodes.delete(vertex);
+    if (!this.nodes.has(vertex)) return;
+
+    for (const adjacent of vertex.adjacent) {
+      this.removeEdge(vertex, adjacent);
     }
+    this.nodes.delete(vertex);
   }
 
-  // Returns an array of Node values
-  // Uses the supplied callback to determine next node to retrieve
+  /**
+   * Private traversal helper.
+   * @param {Node} start The starting node for the traversal.
+   * @param {boolean} [useQueue=false] If true, uses BFS (queue); otherwise, uses DFS (stack).
+   * @returns {*[]|undefined} An array of visited node values, or undefined if start node is not in graph.
+   */
   _traverse(start, useQueue = false) {
     if (!this.nodes.has(start)) return undefined;
 
@@ -76,48 +99,22 @@ class Graph {
     return visitedValues;
   }
 
-  // Returns an array of Node values using DFS
+  /**
+   * Performs a depth-first search starting from a given node.
+   * @param {Node} start The starting node.
+   * @returns {*[]} An array of node values in DFS order.
+   */
   depthFirstSearch(start) {
     return this._traverse(start, false);
   }
 
-  // Returns an array of Node values using BFS
+  /**
+   * Performs a breadth-first search starting from a given node.
+   * @param {Node} start The starting node.
+   * @returns {*[]} An array of node values in BFS order.
+   */
   breadthFirstSearch(start) {
     return this._traverse(start, true);
-  }
-}
-class Queue {
-  constructor() {
-    this.head = null;
-    this.tail = null;
-    this.size = 0;
-  }
-
-  enqueue(val) {
-    const newNode = { value: val, next: null };
-    if (this.tail) {
-      this.tail.next = newNode;
-    }
-    this.tail = newNode;
-    if (!this.head) {
-      this.head = newNode;
-    }
-    this.size++;
-  }
-
-  dequeue() {
-    if (!this.head) return undefined;
-    const item = this.head.value;
-    this.head = this.head.next;
-    this.size--;
-    if (this.size === 0) {
-      this.tail = null;
-    }
-    return item;
-  }
-
-  isEmpty() {
-    return this.size === 0;
   }
 }
 
