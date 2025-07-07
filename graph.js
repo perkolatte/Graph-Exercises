@@ -24,18 +24,16 @@ class Graph {
 
   // Connects two nodes
   addEdge(v1, v2) {
-    if (this.nodes.has(v1) && this.nodes.has(v2)) {
-      v1.adjacent.add(v2);
-      v2.adjacent.add(v1);
-    }
+    if (!this.nodes.has(v1) || !this.nodes.has(v2))
+      throw new Error("Both vertices must be in the graph to form an edge.");
+    v1.adjacent.add(v2);
+    v2.adjacent.add(v1);
   }
 
   // Disconnects two nodes
   removeEdge(v1, v2) {
-    if (this.nodes.has(v1) && this.nodes.has(v2)) {
-      v1.adjacent.delete(v2);
-      v2.adjacent.delete(v1);
-    }
+    v1.adjacent.delete(v2);
+    v2.adjacent.delete(v1);
   }
 
   // Removes a node and its connections
@@ -50,21 +48,28 @@ class Graph {
 
   // Returns an array of Node values
   // Uses the supplied callback to determine next node to retrieve
-  _traverse(start, getNext) {
+  _traverse(start, useQueue = false) {
     if (!this.nodes.has(start)) return undefined;
 
-    const toVisit = [start];
+    const toVisit = useQueue ? new Queue() : [start];
+    if (useQueue) {
+      toVisit.enqueue(start);
+    }
     const seen = new Set([start]);
     const visitedValues = [];
 
-    while (toVisit.length) {
-      const current = getNext(toVisit);
+    while (useQueue ? !toVisit.isEmpty() : toVisit.length) {
+      const current = useQueue ? toVisit.dequeue() : toVisit.pop();
       visitedValues.push(current.value);
 
       for (const adjacent of current.adjacent) {
         if (!seen.has(adjacent)) {
           seen.add(adjacent);
-          toVisit.push(adjacent);
+          if (useQueue) {
+            toVisit.enqueue(adjacent);
+          } else {
+            toVisit.push(adjacent);
+          }
         }
       }
     }
@@ -73,12 +78,46 @@ class Graph {
 
   // Returns an array of Node values using DFS
   depthFirstSearch(start) {
-    return this._traverse(start, (stack) => stack.pop());
+    return this._traverse(start, false);
   }
 
   // Returns an array of Node values using BFS
   breadthFirstSearch(start) {
-    return this._traverse(start, (queue) => queue.shift());
+    return this._traverse(start, true);
+  }
+}
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(val) {
+    const newNode = { value: val, next: null };
+    if (this.tail) {
+      this.tail.next = newNode;
+    }
+    this.tail = newNode;
+    if (!this.head) {
+      this.head = newNode;
+    }
+    this.size++;
+  }
+
+  dequeue() {
+    if (!this.head) return undefined;
+    const item = this.head.value;
+    this.head = this.head.next;
+    this.size--;
+    if (this.size === 0) {
+      this.tail = null;
+    }
+    return item;
+  }
+
+  isEmpty() {
+    return this.size === 0;
   }
 }
 
